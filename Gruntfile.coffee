@@ -212,7 +212,8 @@ module.exports = (grunt) ->
   # release:major
   grunt.registerTask 'release', (type) ->
     type ?= 'patch'
-    grunt.task.run('full-test')
+    #grunt.task.run('full-test')
+    grunt.task.run('test')
     grunt.task.run('bump-only:' + type)
     grunt.task.run('build')
     grunt.task.run('bump-commit')
