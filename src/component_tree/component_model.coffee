@@ -35,6 +35,7 @@ module.exports = class ComponentModel
     @next = undefined # set by ComponentContainer
     @previous = undefined # set by ComponentContainer
     @componentTree = undefined # set by ComponentTree
+    @inlineStyles ||= {}
 
 
   initializeDirectives: ->
@@ -324,6 +325,10 @@ module.exports = class ComponentModel
     value = @get(name)
     value == undefined || value == ''
 
+  # set the inline style of the component
+  setInlineStyles: (inlineStyles) ->
+    for name, value of inlineStyles
+      @inlineStyles[name] = value
 
   # Data Operations
   # ---------------

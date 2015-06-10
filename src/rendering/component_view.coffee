@@ -14,6 +14,7 @@ module.exports = class ComponentView
     @template = @model.template
     @isAttachedToDom = false
     @wasAttachedToDom = $.Callbacks();
+    @rootComponentKey = 'root'
 
     @decorateMarkup()
     @render()
@@ -145,8 +146,32 @@ module.exports = class ComponentView
   setAll: ->
     for name, value of @model.content
       @set(name, value)
+      @setInlineStyle(name)
+
+    # sets the style on the root element
+    @setRootInlineStyle()
 
     undefined
+
+
+  # Set the style on the root element
+  setRootInlineStyle: () ->
+    # set the special case style on the root
+    # component if available
+    value = @model.inlineStyles[@rootComponentKey]
+    if value
+      @$html.css(value)
+
+
+  # Set the style on passed directive element
+  #
+  # @param {!string} name The name of the directive
+  # in which the inline style will be applied
+  setInlineStyle: (name) ->
+    value = @model.inlineStyles[name]
+    if value
+      $elem = @directives.$getElem(name)
+      $elem.css(value)
 
 
   set: (name, value) ->
