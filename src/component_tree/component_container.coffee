@@ -30,7 +30,6 @@ module.exports = class ComponentContainer
       @allowedChildren ?= {}
       parts = componentName.split('|')
       @allowedChildren[parts[0]] = if parts.length == 1 then true else parts.slice(1)
-      console.info @allowedChildren[parts[0]]
 
 
   # Nesting Validations
