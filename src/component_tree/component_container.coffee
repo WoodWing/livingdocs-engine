@@ -28,7 +28,9 @@ module.exports = class ComponentContainer
 
     for componentName in configuration.allowedChildren || []
       @allowedChildren ?= {}
-      @allowedChildren[componentName] = true
+      parts = componentName.split('|')
+      @allowedChildren[parts[0]] = if parts.length == 1 then true else parts.slice(1)
+      console.info @allowedChildren[parts[0]]
 
 
   # Nesting Validations
@@ -37,7 +39,7 @@ module.exports = class ComponentContainer
   # @param {ComponentModel}
   isAllowedAsChild: (component) ->
     !!( @canBeNested(component.id) &&
-      @isChildAllowed(component.template) &&
+      @isChildAllowedExt(component) &&
       @isAllowedAsParent(component.template) )
 
 
@@ -63,6 +65,23 @@ module.exports = class ComponentContainer
   # inserted here.
   isChildAllowed: (template) ->
     @allowedChildren == undefined || @allowedChildren[template.name]
+
+  # Check if the configuration allows a component to be
+  # inserted here (additional checking).
+  isChildAllowedExt: (component) ->
+    @allowedChildren == undefined ||
+      (@allowedChildren[component.template.name] && (@allowedChildren[component.template.name] == true || @checkComponent(component, @allowedChildren[component.template.name])))
+
+  checkComponent: (component, rules) ->
+    accept = true;
+    for rule in rules
+      parts = rule.split(':')
+      type = parts[0]
+      values = parts[1].split(',')
+      for value in values
+        switch type
+          when 'required' then accept = accept && !!component.get(value)
+    accept
 
 
   isAllowedAsParent: (template) ->
