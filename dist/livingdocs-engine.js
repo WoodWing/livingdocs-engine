@@ -2609,7 +2609,7 @@ module.exports = ComponentContainer = (function() {
   }
 
   ComponentContainer.prototype.parseConfig = function(configuration) {
-    var componentName, i, len, ref, results;
+    var componentName, i, len, parts, ref, results;
     if (configuration == null) {
       return;
     }
@@ -2620,13 +2620,14 @@ module.exports = ComponentContainer = (function() {
       if (this.allowedChildren == null) {
         this.allowedChildren = {};
       }
-      results.push(this.allowedChildren[componentName] = true);
+      parts = componentName.split('|');
+      results.push(this.allowedChildren[parts[0]] = parts.length === 1 ? true : parts.slice(1));
     }
     return results;
   };
 
   ComponentContainer.prototype.isAllowedAsChild = function(component) {
-    return !!(this.canBeNested(component.id) && this.isChildAllowed(component.template) && this.isAllowedAsParent(component.template));
+    return !!(this.canBeNested(component.id) && this.isChildAllowedExt(component) && this.isAllowedAsParent(component.template));
   };
 
   ComponentContainer.prototype.isTypeAllowedAsChild = function(template) {
@@ -2650,6 +2651,29 @@ module.exports = ComponentContainer = (function() {
 
   ComponentContainer.prototype.isChildAllowed = function(template) {
     return this.allowedChildren === void 0 || this.allowedChildren[template.name];
+  };
+
+  ComponentContainer.prototype.isChildAllowedExt = function(component) {
+    return this.allowedChildren === void 0 || (this.allowedChildren[component.template.name] && (this.allowedChildren[component.template.name] === true || this.checkComponent(component, this.allowedChildren[component.template.name])));
+  };
+
+  ComponentContainer.prototype.checkComponent = function(component, rules) {
+    var accept, i, j, len, len1, parts, rule, type, value, values;
+    accept = true;
+    for (i = 0, len = rules.length; i < len; i++) {
+      rule = rules[i];
+      parts = rule.split(':');
+      type = parts[0];
+      values = parts[1].split(',');
+      for (j = 0, len1 = values.length; j < len1; j++) {
+        value = values[j];
+        switch (type) {
+          case 'required':
+            accept = accept && !!component.get(value);
+        }
+      }
+    }
+    return accept;
   };
 
   ComponentContainer.prototype.isAllowedAsParent = function(template) {
@@ -10139,8 +10163,8 @@ Template.parseIdentifier = function(identifier) {
 
 },{"../component_tree/component_model":17,"../configuration/config":26,"../modules/logging/assert":50,"../modules/logging/log":51,"../modules/words":55,"../rendering/component_view":56,"./directive_collection":70,"./directive_compiler":71,"./directive_finder":72,"./directive_iterator":73,"jquery":"jquery"}],75:[function(require,module,exports){
 module.exports={
-  "version": "0.12.2",
-  "revision": "6501fd5",
+  "version": "0.12.3",
+  "revision": "dd9037b",
   "forked-from-engine-version": "0.12.1"
 }
 
