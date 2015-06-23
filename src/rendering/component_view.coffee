@@ -240,7 +240,7 @@ module.exports = class ComponentView
 
     if not value
       $elem.html(@template.defaults[name])
-    else if value and not @isReadOnly
+    else if value and not @isReadOnly and config.shouldBlockInteraction
       @blockInteraction($elem)
 
     @directivesToReset ||= {}

@@ -21,6 +21,10 @@ module.exports = augmentConfig(
 
   attributePrefix: 'data'
 
+  # flag indicating whether the user interaction on the embed directive should be blocked or not
+  # @default true
+  shouldBlockInteraction: true
+
   # Editable configuration
   editable:
     allowNewline: true # Allow to insert newlines with Shift+Enter
