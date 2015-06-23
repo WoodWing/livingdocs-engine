@@ -4519,6 +4519,7 @@ module.exports = augmentConfig({
   wordSeparators: "./\\()\"':,.;<>~!#%^&*|+=[]{}`~?",
   singleLineBreak: /^<br\s*\/?>\s*$/,
   attributePrefix: 'data',
+  shouldBlockInteraction: true,
   editable: {
     allowNewline: true,
     changeDelay: 0,
@@ -7799,7 +7800,7 @@ module.exports = ComponentView = (function() {
     $elem.html(value || '');
     if (!value) {
       $elem.html(this.template.defaults[name]);
-    } else if (value && !this.isReadOnly) {
+    } else if (value && !this.isReadOnly && config.shouldBlockInteraction) {
       this.blockInteraction($elem);
     }
     this.directivesToReset || (this.directivesToReset = {});
@@ -10163,8 +10164,8 @@ Template.parseIdentifier = function(identifier) {
 
 },{"../component_tree/component_model":17,"../configuration/config":26,"../modules/logging/assert":50,"../modules/logging/log":51,"../modules/words":55,"../rendering/component_view":56,"./directive_collection":70,"./directive_compiler":71,"./directive_finder":72,"./directive_iterator":73,"jquery":"jquery"}],75:[function(require,module,exports){
 module.exports={
-  "version": "0.12.3",
-  "revision": "dd9037b",
+  "version": "0.12.4",
+  "revision": "45f9d80",
   "forked-from-engine-version": "0.12.1"
 }
 
