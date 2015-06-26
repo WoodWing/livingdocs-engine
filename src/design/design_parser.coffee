@@ -162,6 +162,7 @@ module.exports = designParser =
 
       @design.groups.push
         label: group.label
+        name: group.name || group.label
         components: components
 
 
