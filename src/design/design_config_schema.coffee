@@ -85,6 +85,7 @@ validator.add 'component',
 
 validator.add 'group',
   label: 'string'
+  name: 'string, optional'
   components: 'array of string'
 
 
