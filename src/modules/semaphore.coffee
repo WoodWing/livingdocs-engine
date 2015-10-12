@@ -72,6 +72,9 @@ module.exports = class Semaphore
 
   # @private
   fireIfReady: ->
+    results = []
     if @count == 0 && @started == true
       @wasFired = true
-      callback() for callback in @callbacks
+      results = (callback() for callback in @callbacks)
+      @callbacks = []
+    results
