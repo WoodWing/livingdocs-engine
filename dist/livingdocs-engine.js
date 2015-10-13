@@ -7431,17 +7431,23 @@ module.exports = Semaphore = (function() {
   };
 
   Semaphore.prototype.fireIfReady = function() {
-    var callback, i, len, ref, results;
+    var callback, results;
+    results = [];
     if (this.count === 0 && this.started === true) {
       this.wasFired = true;
-      ref = this.callbacks;
-      results = [];
-      for (i = 0, len = ref.length; i < len; i++) {
-        callback = ref[i];
-        results.push(callback());
-      }
-      return results;
+      results = (function() {
+        var i, len, ref, results1;
+        ref = this.callbacks;
+        results1 = [];
+        for (i = 0, len = ref.length; i < len; i++) {
+          callback = ref[i];
+          results1.push(callback());
+        }
+        return results1;
+      }).call(this);
+      this.callbacks = [];
     }
+    return results;
   };
 
   return Semaphore;
@@ -10166,8 +10172,8 @@ Template.parseIdentifier = function(identifier) {
 
 },{"../component_tree/component_model":17,"../configuration/config":26,"../modules/logging/assert":50,"../modules/logging/log":51,"../modules/words":55,"../rendering/component_view":56,"./directive_collection":70,"./directive_compiler":71,"./directive_finder":72,"./directive_iterator":73,"jquery":"jquery"}],75:[function(require,module,exports){
 module.exports={
-  "version": "0.12.5",
-  "revision": "6ee76a6",
+  "version": "0.12.6",
+  "revision": "964d4e3",
   "forked-from-engine-version": "0.12.1"
 }
 
