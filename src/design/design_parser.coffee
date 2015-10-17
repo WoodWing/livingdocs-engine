@@ -39,6 +39,7 @@ module.exports = designParser =
         'defaultLayout'
         'defaultContent'
         'prefilledComponents'
+        'conversationRules'
       ], (index, attributeName) =>
         @design[attributeName] = designConfig[attributeName]
 
