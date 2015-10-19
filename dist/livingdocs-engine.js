@@ -5068,7 +5068,7 @@ validator.add('design', {
   defaultLayout: 'string, optional',
   defaultContent: 'array of object, optional',
   prefilledComponents: 'object, optional',
-  conversationRules: 'object, optional'
+  conversionRules: 'object, optional'
 });
 
 validator.add('component', {
@@ -5150,11 +5150,11 @@ module.exports = designParser = {
     }
   },
   createDesign: function(designConfig) {
-    var assets, componentProperties, components, defaultComponents, error, groups, imageRatios;
-    assets = designConfig.assets, components = designConfig.components, componentProperties = designConfig.componentProperties, groups = designConfig.groups, defaultComponents = designConfig.defaultComponents, imageRatios = designConfig.imageRatios;
+    var assets, componentProperties, components, conversionRules, defaultComponents, error, groups, imageRatios;
+    assets = designConfig.assets, components = designConfig.components, componentProperties = designConfig.componentProperties, groups = designConfig.groups, defaultComponents = designConfig.defaultComponents, imageRatios = designConfig.imageRatios, conversionRules = designConfig.conversionRules;
     try {
       this.design = this.parseDesignInfo(designConfig);
-      $.each(['metadata', 'wrapper', 'layouts', 'defaultLayout', 'defaultContent', 'prefilledComponents', 'conversationRules'], (function(_this) {
+      $.each(['metadata', 'wrapper', 'layouts', 'defaultLayout', 'defaultContent', 'prefilledComponents'], (function(_this) {
         return function(index, attributeName) {
           return _this.design[attributeName] = designConfig[attributeName];
         };
@@ -5165,6 +5165,9 @@ module.exports = designParser = {
       this.parseComponents(components);
       this.parseGroups(groups);
       this.parseDefaults(defaultComponents);
+      if (conversionRules) {
+        this.parseConversionRules(conversionRules);
+      }
     } catch (_error) {
       error = _error;
       error.message = "Error creating the design: " + error.message;
@@ -5364,6 +5367,33 @@ module.exports = designParser = {
       }
     }
     return newArray;
+  },
+  parseConversionRules: function(conversionRules) {
+    var componentRules, dstComponentName, results, rule, srcComponentName;
+    this.design.conversionRules = {};
+    results = [];
+    for (srcComponentName in conversionRules) {
+      componentRules = conversionRules[srcComponentName];
+      if (this.getTemplate(srcComponentName)) {
+        this.design.conversionRules[srcComponentName] = {};
+        results.push((function() {
+          var results1;
+          results1 = [];
+          for (dstComponentName in componentRules) {
+            rule = componentRules[dstComponentName];
+            if (this.getTemplate(dstComponentName)) {
+              results1.push(this.design.conversionRules[srcComponentName][dstComponentName] = rule);
+            } else {
+              results1.push(void 0);
+            }
+          }
+          return results1;
+        }).call(this));
+      } else {
+        results.push(void 0);
+      }
+    }
+    return results;
   }
 };
 
@@ -10173,8 +10203,8 @@ Template.parseIdentifier = function(identifier) {
 
 },{"../component_tree/component_model":17,"../configuration/config":26,"../modules/logging/assert":50,"../modules/logging/log":51,"../modules/words":55,"../rendering/component_view":56,"./directive_collection":70,"./directive_compiler":71,"./directive_finder":72,"./directive_iterator":73,"jquery":"jquery"}],75:[function(require,module,exports){
 module.exports={
-  "version": "0.12.7",
-  "revision": "e0fbcbf",
+  "version": "0.12.8",
+  "revision": "bea43b4",
   "forked-from-engine-version": "0.12.1"
 }
 
