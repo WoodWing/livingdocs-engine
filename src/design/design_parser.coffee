@@ -28,6 +28,7 @@ module.exports = designParser =
       groups
       defaultComponents
       imageRatios
+      conversionRules
     } = designConfig
     try
       @design = @parseDesignInfo(designConfig)
@@ -39,7 +40,6 @@ module.exports = designParser =
         'defaultLayout'
         'defaultContent'
         'prefilledComponents'
-        'conversationRules'
       ], (index, attributeName) =>
         @design[attributeName] = designConfig[attributeName]
 
@@ -49,6 +49,8 @@ module.exports = designParser =
       @parseComponents(components)
       @parseGroups(groups)
       @parseDefaults(defaultComponents)
+      if conversionRules
+        @parseConversionRules(conversionRules)
     catch error
       error.message = "Error creating the design: #{ error.message }"
       throw error
@@ -191,6 +193,17 @@ module.exports = designParser =
       newArray.push(val) if val?
 
     newArray
+
+  parseConversionRules: (conversionRules) ->
+    @design.conversionRules = {}
+    for srcComponentName, componentRules of conversionRules
+      if @getTemplate(srcComponentName)
+        @design.conversionRules[srcComponentName] = {}
+        for dstComponentName, rule of componentRules
+          if @getTemplate(dstComponentName)
+            @design.conversionRules[srcComponentName][dstComponentName] = rule
+
+
 
 
 Design.parser = designParser

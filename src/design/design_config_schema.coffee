@@ -71,7 +71,7 @@ validator.add 'design',
   defaultLayout: 'string, optional'
   defaultContent: 'array of object, optional'
   prefilledComponents: 'object, optional'
-  conversationRules: 'object, optional'
+  conversionRules: 'object, optional'
 
 
 validator.add 'component',
