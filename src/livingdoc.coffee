@@ -119,6 +119,23 @@ module.exports = class Livingdoc extends EventEmitter
     view.create(renderInIframe: iframe)
 
 
+  # Destroys a view. Removes any listeners on the view and clears the reference on the livingdoc.
+  #
+  # @param {object}
+  #   view {View, the view to be destroyed}
+  destroyView: (view) ->
+    view.renderer.removeComponentTreeListeners()
+    view.renderer.$root.removeData()
+    view.renderer.clear()
+    view.iframe.remove()
+    view.iframe = null
+    view.page.removeListeners()
+    view.page = null
+    view.livingdoc = null
+
+    @removeView(view)
+
+
   # Append the livingdoc to the DOM.
   #
   # @param {Object}
@@ -156,6 +173,20 @@ module.exports = class Livingdoc extends EventEmitter
         @componentTree.setMainView(view)
     else
       @readOnlyViews.push(view)
+
+
+  # Removes a view without destroying it. Any active listener stays active.
+  #
+  # @param {object}
+  #   view {View, the view to be removed}
+  removeView: (view) ->
+    if view.isInteractive
+      if @interactiveView is view
+        @interactiveView = undefined
+    else
+      pos = @readOnlyViews.indexOf(view);
+      if pos isnt -1
+        @readOnlyViews.splice(pos, 1)
 
 
   addJsDependency: (obj) ->

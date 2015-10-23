@@ -79,33 +79,41 @@ module.exports = class Renderer
   # ----------------------------
 
   setupComponentTreeListeners: ->
-    @componentTree.componentAdded.add( $.proxy(@componentAdded, this) )
-    @componentTree.componentRemoved.add( $.proxy(@componentRemoved, this) )
-    @componentTree.componentMoved.add( $.proxy(@componentMoved, this) )
-    @componentTree.componentContentChanged.add( $.proxy(@componentContentChanged, this) )
-    @componentTree.componentHtmlChanged.add( $.proxy(@componentHtmlChanged, this) )
+    @componentTree.componentAdded.add( @componentAdded )
+    @componentTree.componentRemoved.add( @componentRemoved )
+    @componentTree.componentMoved.add( @componentMoved )
+    @componentTree.componentContentChanged.add( @componentContentChanged )
+    @componentTree.componentHtmlChanged.add( @componentHtmlChanged )
 
 
-  componentAdded: (model) ->
+  removeComponentTreeListeners: ->
+    @componentTree.componentAdded.remove( @componentAdded )
+    @componentTree.componentRemoved.remove( @componentRemoved )
+    @componentTree.componentMoved.remove( @componentMoved )
+    @componentTree.componentContentChanged.remove( @componentContentChanged )
+    @componentTree.componentHtmlChanged.remove( @componentHtmlChanged )
+
+
+  componentAdded: (model) =>
     @insertComponent(model)
 
 
-  componentRemoved: (component) ->
+  componentRemoved: (component) =>
     component.descendantsAndSelf (model) =>
       @removeComponentFromDom(model)
       @deleteCachedComponentView(model)
 
 
-  componentMoved: (model) ->
+  componentMoved: (model) =>
     @removeComponentFromDom(model)
     @insertComponent(model)
 
 
-  componentContentChanged: (model, directiveName) ->
+  componentContentChanged: (model, directiveName) =>
     @getOrCreateComponentView(model).updateContent(directiveName)
 
 
-  componentHtmlChanged: (model) ->
+  componentHtmlChanged: (model) =>
     @getOrCreateComponentView(model).updateHtml()
 
 

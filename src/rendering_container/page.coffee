@@ -33,6 +33,12 @@ module.exports = class Page extends RenderingContainer
     , 0
 
 
+  removeListeners: ->
+    @documentDependencies.dependenciesAdded.remove(@onDependenciesAdded);
+    @documentDependencies.dependencyToExecute.remove(@onDependenciesToExecute);
+    @documentDependencies.codeToExecute.remove(@onCodeToExecute);
+
+
   loadAssets: =>
     # First load design dependencies
     if @design?
@@ -45,15 +51,24 @@ module.exports = class Page extends RenderingContainer
       @assets.loadDependencies(deps.js, deps.css, @readySemaphore.wait())
 
       # listen for new dependencies
-      @documentDependencies.dependenciesAdded.add (jsDependencies, cssDependencies) =>
-        @assets.loadDependencies(jsDependencies, cssDependencies, ->)
+      @documentDependencies.dependenciesAdded.add(@onDependenciesAdded);
 
       # listen for dependencies to execute once
-      @documentDependencies.dependencyToExecute.add (dependency) =>
-        @assets.loadDependency(dependency)
+      @documentDependencies.dependencyToExecute.add(@onDependenciesToExecute);
 
-      @documentDependencies.codeToExecute.add (callback) =>
-        callback(@window)
+      @documentDependencies.codeToExecute.add(@onCodeToExecute);
+
+
+  onDependenciesAdded: (jsDependencies, cssDependencies) =>
+    @assets.loadDependencies(jsDependencies, cssDependencies, ->)
+
+
+  onDependenciesToExecute: (dependency) =>
+    @assets.loadDependency(dependency)
+
+
+  onCodeToExecute: (callback) =>
+    callback(@window)
 
 
   setWindow: (hostWindow) ->
