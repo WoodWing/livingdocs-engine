@@ -1,6 +1,7 @@
 d3 = require('d3')
 differenceService = require('../charts/difference_service')
 bulletService = require('../charts/bullet_service')
+barService = require('../charts/bar_service')
 module.exports =
 
 
@@ -16,7 +17,7 @@ module.exports =
         height: 500
     type = value.type
 
-    $elem.addClass(type)
+    $elem.addClass type
     $elem.empty()
     d3element = d3.select($elem[0])
     d3element.empty()
@@ -24,5 +25,4 @@ module.exports =
     switch type
       when 'difference' then differenceService.display data, size, d3element.append('svg')
       when 'bullet' then bulletService.display data, size, $elem
-
-
+      when 'bar' then barService.display data, size, d3element.append('svg')
