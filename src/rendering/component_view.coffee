@@ -307,15 +307,29 @@ module.exports = class ComponentView
 
   setChart: (name, value) ->
     if value && _.isString value
-      data  = JSON.parse value
+      value  = JSON.parse value
+      if value?.data
+        data = value.data
+        size = value.size
+      else
+        data = value
+        size =
+          width: 800
+          height: 500
+      type = value.type
+
       $elem = @directives.$getElem(name)
+      $elem.empty()
+      d3element = d3.select($elem[0])
+      svg = d3element.append('svg')
+
       margin =
         top: 20
         right: 20
         bottom: 30
         left: 50
-      width = 960 - (margin.left) - (margin.right)
-      height = 500 - (margin.top) - (margin.bottom)
+      width = size.width - (margin.left) - (margin.right)
+      height = size.height - (margin.top) - (margin.bottom)
       parseDate = d3.time.format('%Y%m%d').parse
       x = d3.time.scale().range([
         0
@@ -337,9 +351,8 @@ module.exports = class ComponentView
       ).y1((d) ->
         y d['item1']
       )
-      d3element = d3.select($elem[0])
-      console.log d3element
-      svg = d3element.append('svg').attr('width', width + margin.left + margin.right).attr('height', height + margin.top + margin.bottom).append('g').attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
+
+      svg.attr('width', width + margin.left + margin.right).attr('height', height + margin.top + margin.bottom).append('g').attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
       data.forEach (d) ->
         d.date = parseDate(d.date)
         d['item1'] = +d['item1']
@@ -366,10 +379,6 @@ module.exports = class ComponentView
       svg.append('path').attr('class', 'line').attr 'd', line
       svg.append('g').attr('class', 'x axis').attr('transform', 'translate(0,' + height + ')').call xAxis
       svg.append('g').attr('class', 'y axis').call(yAxis).append('text').attr('transform', 'rotate(-90)').attr('y', 6).attr('dy', '.71em').style('text-anchor', 'end').text 'Temperature (ºF)'
-
-
-
-    console.log $elem
 
 
   setPlaceholderImage: ($elem, name) ->
@@ -452,6 +461,9 @@ module.exports = class ComponentView
 
   stripDocClasses: (elem) ->
     $elem = $(elem)
+    if _.isUndefined elem.className.split
+      return
+
     for klass in elem.className.split(/\s+/)
       $elem.removeClass(klass) if /doc\-.*/i.test(klass)
 
