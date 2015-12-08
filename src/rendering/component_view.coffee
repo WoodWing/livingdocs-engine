@@ -314,7 +314,7 @@ module.exports = class ComponentView
       else
         data = value
         size =
-          width: 800
+          width: 960
           height: 500
       type = value.type
 
