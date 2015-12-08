@@ -198,6 +198,7 @@ module.exports = class ComponentView
       when 'image' then @getImage(name)
       when 'html' then @getHtml(name)
       when 'link' then @getLink(name)
+      when 'chart' then @getChart(name)
 
 
   getEditable: (name) ->
@@ -302,6 +303,9 @@ module.exports = class ComponentView
       setPlaceholder = $.proxy(@setPlaceholderImage, this, $elem, name)
       @delayUntilAttached(name, setPlaceholder) # todo: replace with @afterInserted -> ... (something like $.Callbacks('once remember'))
 
+  getChart: (name) ->
+    directive = @directives.get('chart')
+    directive?.getChartData()
 
   setChart: (name, value) ->
     if value

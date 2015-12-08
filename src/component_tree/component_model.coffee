@@ -321,6 +321,11 @@ module.exports = class ComponentModel
     assert @content?.hasOwnProperty(name),
       "get error: #{ @componentName } has no content named #{ name }"
 
+    directive = @directives.get(name)
+    if directive.isChart
+      data = directive.getChartData()
+      return JSON.stringify data if data
+
     @directives.get(name).getContent()
 
 
