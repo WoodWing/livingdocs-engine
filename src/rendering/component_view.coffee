@@ -198,8 +198,6 @@ module.exports = class ComponentView
       when 'image' then @getImage(name)
       when 'html' then @getHtml(name)
       when 'link' then @getLink(name)
-      when 'chart' then @getChart(name)
-
 
   getEditable: (name) ->
     $elem = @directives.$getElem(name)
@@ -308,8 +306,8 @@ module.exports = class ComponentView
     directive?.getChartData()
 
   setChart: (name, value) ->
-    if value
-      data  = value.data
+    if value && _.isString value
+      data  = JSON.parse value
       $elem = @directives.$getElem(name)
       margin =
         top: 20

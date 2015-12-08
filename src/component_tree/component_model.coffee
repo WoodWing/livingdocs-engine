@@ -309,10 +309,6 @@ module.exports = class ComponentModel
       if directive.getImageUrl() != value
         directive.setImageUrl(value)
         @componentTree.contentChanging(this, name) if @componentTree
-    else if directive.isChart
-      data = JSON.parse value
-      directive.setChartData(data)
-      @componentTree.contentChanging(this, name) if @componentTree
     else
       @setContent(name, value)
 
@@ -320,11 +316,6 @@ module.exports = class ComponentModel
   get: (name) ->
     assert @content?.hasOwnProperty(name),
       "get error: #{ @componentName } has no content named #{ name }"
-
-    directive = @directives.get(name)
-    if directive.isChart
-      data = directive.getChartData()
-      return JSON.stringify data if data
 
     @directives.get(name).getContent()
 
