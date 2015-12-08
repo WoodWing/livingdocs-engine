@@ -14,7 +14,8 @@
     "jscheme": "^0.2.1",
     "jsdom": "^3.1.2",
     "underscore": "~1.6.0",
-    "wolfy87-eventemitter": "~4.2.6"
+    "wolfy87-eventemitter": "~4.2.6",
+    "d3": "3.5.10"
   },
   "devDependencies": {
     "chai": "^1.10.0",

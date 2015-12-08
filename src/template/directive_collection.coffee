@@ -23,7 +23,7 @@ module.exports = class DirectiveCollection
     @all[directive.name] = directive
 
     # index by type
-    # directive.type is one of those 'container', 'editable', 'image', 'html'
+    # directive.type is one of those 'container', 'editable', 'image', 'html', 'chart'
     this[directive.type] ||= []
     this[directive.type].push(directive)
     directive
@@ -90,6 +90,9 @@ module.exports = class DirectiveCollection
 
   eachHtml: (callback) ->
     @eachOfType('html', callback)
+
+  eachChart: (callback) ->
+    @eachOfType('chart', callback)
 
 
   clone: ->

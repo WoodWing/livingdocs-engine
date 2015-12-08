@@ -18,7 +18,7 @@ module.exports = class ImageDirective extends ComponentDirective
   # Copy the contents of this directive to another directive
   # (possibly of a different component).
   #
-  # Cropping info should not be copied. And the other directive
+  # Cropping info should not be copied. And the otd3elementher directive
   # could possibly have a different image service. Thus we
   # just copy over the original image url.
   copyTo: (otherDirective) ->

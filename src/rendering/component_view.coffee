@@ -5,6 +5,8 @@ attr = config.attr
 DirectiveIterator = require('../template/directive_iterator')
 eventing = require('../modules/eventing')
 dom = require('../interaction/dom')
+d3 = require('d3')
+_ = require('underscore')
 
 module.exports = class ComponentView
 
@@ -186,6 +188,7 @@ module.exports = class ComponentView
 
       when 'html' then @setHtml(name, value)
       when 'link' then @setLink(name, value)
+      when 'chart' then @setChart(name, value)
 
 
   get: (name) ->
@@ -298,6 +301,73 @@ module.exports = class ComponentView
     else
       setPlaceholder = $.proxy(@setPlaceholderImage, this, $elem, name)
       @delayUntilAttached(name, setPlaceholder) # todo: replace with @afterInserted -> ... (something like $.Callbacks('once remember'))
+
+
+  setChart: (name, value) ->
+    if value
+      data  = value.data
+      $elem = @directives.$getElem(name)
+      margin =
+        top: 20
+        right: 20
+        bottom: 30
+        left: 50
+      width = 960 - (margin.left) - (margin.right)
+      height = 500 - (margin.top) - (margin.bottom)
+      parseDate = d3.time.format('%Y%m%d').parse
+      x = d3.time.scale().range([
+        0
+        width
+      ])
+      y = d3.scale.linear().range([
+        height
+        0
+      ])
+      xAxis = d3.svg.axis().scale(x).orient('bottom')
+      yAxis = d3.svg.axis().scale(y).orient('left')
+      line = d3.svg.area().interpolate('basis').x((d) ->
+        x d.date
+      ).y((d) ->
+        y d['New York']
+      )
+      area = d3.svg.area().interpolate('basis').x((d) ->
+        x d.date
+      ).y1((d) ->
+        y d['New York']
+      )
+      d3element = d3.select($elem[0]) #d3.select("body") #
+      console.log d3element
+      svg = d3element.append('svg').attr('width', width + margin.left + margin.right).attr('height', height + margin.top + margin.bottom).append('g').attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
+      data.forEach (d) ->
+        d.date = parseDate(d.date)
+        d['New York'] = +d['New York']
+        d['San Francisco'] = +d['San Francisco']
+        return
+      x.domain d3.extent(data, (d) ->
+        d.date
+      )
+      y.domain [
+        d3.min(data, (d) ->
+          Math.min d['New York'], d['San Francisco']
+        )
+        d3.max(data, (d) ->
+          Math.max d['New York'], d['San Francisco']
+        )
+      ]
+      svg.datum data
+      svg.append('clipPath').attr('id', 'clip-below').append('path').attr 'd', area.y0(height)
+      svg.append('clipPath').attr('id', 'clip-above').append('path').attr 'd', area.y0(0)
+      svg.append('path').attr('class', 'area above').attr('clip-path', 'url(#clip-above)').attr 'd', area.y0((d) ->
+        y d['San Francisco']
+      )
+      svg.append('path').attr('class', 'area below').attr('clip-path', 'url(#clip-below)').attr 'd', area
+      svg.append('path').attr('class', 'line').attr 'd', line
+      svg.append('g').attr('class', 'x axis').attr('transform', 'translate(0,' + height + ')').call xAxis
+      svg.append('g').attr('class', 'y axis').call(yAxis).append('text').attr('transform', 'rotate(-90)').attr('y', 6).attr('dy', '.71em').style('text-anchor', 'end').text 'Temperature (ºF)'
+
+
+
+    console.log $elem
 
 
   setPlaceholderImage: ($elem, name) ->

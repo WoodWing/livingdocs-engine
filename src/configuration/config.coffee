@@ -100,6 +100,9 @@ module.exports = augmentConfig(
     link:
       attr: 'doc-link'
       renderedAttr: 'calculated in augment_config'
+    chart:
+      attr: 'doc-chart'
+      renderedAttr: 'calculated in augment_config'
     optional:
       attr: 'doc-optional'
       renderedAttr: 'calculated in augment_config'

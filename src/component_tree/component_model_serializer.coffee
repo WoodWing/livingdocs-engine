@@ -63,6 +63,10 @@ module.exports = do ->
       if model.directives.get(name).type == 'image' && typeof value == 'string'
         model.content[name] =
           url: value
+      # Transform string into object: Backwards compatibility for old image values.
+#      else if model.directives.get(name).type == 'chart' && typeof value == 'string'
+#        model.content[name] =
+#          data: value
       else
         model.content[name] = value
 

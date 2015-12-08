@@ -49,7 +49,7 @@ module.exports = class ComponentModel
             name: directive.name
             parentComponent: this
             config: directive.config
-        when 'editable', 'image', 'html', 'link'
+        when 'editable', 'image', 'html', 'link', 'chart'
           @createComponentDirective(directive)
           @content ||= {}
           @content[directive.name] = undefined
@@ -57,7 +57,7 @@ module.exports = class ComponentModel
           log.error "Template directive type '#{ directive.type }' not implemented in ComponentModel"
 
 
-  # Create a directive for 'editable', 'image', 'html' template directives
+  # Create a directive for 'editable', 'image', 'html', 'chart' template directives
   createComponentDirective: (templateDirective) ->
     @directives.add directiveFactory.create
       component: this
@@ -309,6 +309,10 @@ module.exports = class ComponentModel
       if directive.getImageUrl() != value
         directive.setImageUrl(value)
         @componentTree.contentChanging(this, name) if @componentTree
+    else if directive.isChart
+      data = JSON.parse value
+      directive.setChartData(data)
+      @componentTree.contentChanging(this, name) if @componentTree
     else
       @setContent(name, value)
 

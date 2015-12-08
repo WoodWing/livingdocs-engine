@@ -5,6 +5,7 @@ EditableDirective = require('./editable_directive')
 ImageDirective = require('./image_directive')
 HtmlDirective = require('./html_directive')
 LinkDirective = require('./link_directive')
+ChartDirective = require('./chart_directive')
 
 module.exports =
 
@@ -23,5 +24,7 @@ module.exports =
         HtmlDirective
       when 'link'
         LinkDirective
+      when 'chart'
+        ChartDirective
       else
         assert false, "Unsupported component directive: #{ directiveType }"
