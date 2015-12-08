@@ -5,7 +5,6 @@ attr = config.attr
 DirectiveIterator = require('../template/directive_iterator')
 eventing = require('../modules/eventing')
 dom = require('../interaction/dom')
-d3 = require('d3')
 _ = require('underscore')
 chartService = require('../charts/charts_service')
 
@@ -309,10 +308,7 @@ module.exports = class ComponentView
   setChart: (name, value) ->
     if value && _.isString value
       $elem = @directives.$getElem(name)
-      $elem.empty()
-      d3element = d3.select($elem[0])
-      svg = d3element.append('svg')
-      chartService.display value, svg
+      chartService.display value, $elem
 
 
   setPlaceholderImage: ($elem, name) ->
