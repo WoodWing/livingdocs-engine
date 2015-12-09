@@ -7631,6 +7631,14 @@ module.exports = ComponentView = (function() {
   }
 
   ComponentView.prototype.decorateMarkup = function() {
+    if (this.model.getData('GRID_POSITION')) {
+      this.$html.attr({
+        'grid-x': this.model.getData('GRID_POSITION').x,
+        'grid-y': this.model.getData('GRID_POSITION').y,
+        'grid-w': this.model.getData('GRID_POSITION').w,
+        'grid-h': this.model.getData('GRID_POSITION').h
+      });
+    }
     if (!this.isReadOnly) {
       return this.$html.data('componentView', this).addClass(css.component).attr(attr.template, this.template.identifier);
     }
@@ -10253,7 +10261,7 @@ Template.parseIdentifier = function(identifier) {
 },{"../component_tree/component_model":17,"../configuration/config":26,"../modules/logging/assert":50,"../modules/logging/log":51,"../modules/words":55,"../rendering/component_view":56,"./directive_collection":70,"./directive_compiler":71,"./directive_finder":72,"./directive_iterator":73,"jquery":"jquery"}],75:[function(require,module,exports){
 module.exports={
   "version": "0.12.10",
-  "revision": "2f5b17a",
+  "revision": "66012fe",
   "forked-from-engine-version": "0.12.1"
 }
 
