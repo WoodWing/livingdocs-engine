@@ -14,7 +14,14 @@ module.exports =
     force.nodes(json.nodes).links(json.links).start()
     link = svg.selectAll('.link').data(json.links).enter().append('line').attr('class', 'link')
     node = svg.selectAll('.node').data(json.nodes).enter().append('g').attr('class', 'node').call(force.drag)
-    node.append('image').attr('xlink:href', 'https://github.com/favicon.ico').attr('x', -8).attr('y', -8).attr('width', 16).attr 'height', 16
+    node.append('image').attr('x', -8).attr('y', -8).attr('width', 16).attr('height', 16).attr('xlink:href', (d) ->
+      if d.group == 1
+        'https://inception.woodwing.com/63/assets/images/favicon-32x32.png'
+      else if d.group == 2
+        'https://elvis.woodwing.com/img/favicon.a23aa4e3.ico'
+      else
+        'https://github.com/favicon.ico'
+    )
     node.append('text').attr('dx', 12).attr('dy', '.35em').text (d) ->
       d.name
     force.on 'tick', ->
