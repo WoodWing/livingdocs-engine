@@ -21,6 +21,13 @@ module.exports = class ComponentView
 
 
   decorateMarkup: ->
+    if @model.getData('GRID_POSITION')
+      @$html.attr({
+        'grid-x': @model.getData('GRID_POSITION').x,
+        'grid-y': @model.getData('GRID_POSITION').y,
+        'grid-w': @model.getData('GRID_POSITION').w,
+        'grid-h': @model.getData('GRID_POSITION').h
+      })
     unless @isReadOnly
       # add attributes and references to the html
       @$html
