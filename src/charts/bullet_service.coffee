@@ -8,8 +8,8 @@ module.exports =
       right: 40
       bottom: 20
       left: 120
-    width = 960 - (margin.left) - (margin.right)
-    height = 50 - (margin.top) - (margin.bottom)
+    width = size.width - (margin.left) - (margin.right)
+    height = size.height - (margin.top) - (margin.bottom)
     chart = d3.bullet().width(width).height(height)
 
     randomize = (d) ->

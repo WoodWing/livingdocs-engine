@@ -15,7 +15,8 @@
     "jsdom": "^3.1.2",
     "underscore": "~1.6.0",
     "wolfy87-eventemitter": "~4.2.6",
-    "d3": "3.5.10"
+    "d3": "3.5.10",
+    "PykCharts": "1.1.0"
   },
   "devDependencies": {
     "chai": "^1.10.0",

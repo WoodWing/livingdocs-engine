@@ -2,6 +2,9 @@ d3 = require('d3')
 differenceService = require('../charts/difference_service')
 bulletService = require('../charts/bullet_service')
 barService = require('../charts/bar_service')
+pieService = require('../charts/pie_service')
+dashboardService = require('../charts/dashboard_service')
+donutService = require('../charts/donut_service')
 module.exports =
 
 
@@ -16,7 +19,6 @@ module.exports =
         width: 960
         height: 500
     type = value.type
-
     $elem.addClass type
     $elem.empty()
     d3element = d3.select($elem[0])
@@ -26,3 +28,7 @@ module.exports =
       when 'difference' then differenceService.display data, size, d3element.append('svg')
       when 'bullet' then bulletService.display data, size, $elem
       when 'bar' then barService.display data, size, d3element.append('svg')
+      when 'pie' then pieService.display data, size, d3element.append('svg')
+      when 'dashboard' then dashboardService.display $elem[0], size, data
+#      when 'donut' then donutService.display data, size, d3element.append('svg')
+
