@@ -6,6 +6,7 @@ pieService = require('../charts/pie_service')
 dashboardService = require('../charts/dashboard_service')
 donutService = require('../charts/donut_service')
 forceService = require('../charts/force_service')
+tableService = require('../charts/table_service')
 module.exports =
 
 
@@ -32,5 +33,6 @@ module.exports =
       when 'pie' then pieService.display data, size, d3element.append('svg')
       when 'dashboard' then dashboardService.display $elem[0], size, data
       when 'force' then forceService.display data, size, d3element.append('svg')
+      when 'table' then tableService.display data, size, $elem[0]
 #      when 'donut' then donutService.display data, size, d3element.append('svg')
 
