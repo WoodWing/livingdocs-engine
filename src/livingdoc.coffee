@@ -127,7 +127,7 @@ module.exports = class Livingdoc extends EventEmitter
     view.renderer.removeComponentTreeListeners()
     view.renderer.$root.removeData()
     view.renderer.clear()
-    view.iframe.remove()
+    $(view.iframe).remove()
     view.iframe = null
     view.page.removeListeners()
     view.page = null
