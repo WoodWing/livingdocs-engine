@@ -308,6 +308,13 @@ module.exports = class ComponentView
 
 
   setStyle: (name, className) ->
+    if name is 'image-link'
+      if className isnt ''
+        @$html.attr('data-link', className)
+        className = '_image-link'
+      else
+        @$html.removeAttr('data-link')
+
     changes = @template.styles[name].cssClassChanges(className)
     if changes.remove
       for removeClass in changes.remove
