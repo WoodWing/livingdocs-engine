@@ -4718,6 +4718,10 @@ module.exports = CssModificatorProperty = (function() {
         assert(options, "TemplateStyle error: no 'options' provided");
         this.options = options;
         break;
+      case 'input':
+        assert(value, "TemplateStyle error: no 'value' provided");
+        this.value = value;
+        break;
       default:
         log.error("TemplateStyle error: unknown type '" + this.type + "'");
     }
@@ -4735,6 +4739,11 @@ module.exports = CssModificatorProperty = (function() {
           remove: this.otherClasses(value),
           add: value
         };
+      } else if (this.type === 'input') {
+        return {
+          remove: value === '' ? ['_image-link'] : void 0,
+          add:  value != '' ? value : void 0
+        };
       }
     } else {
       if (this.type === 'option') {
@@ -4745,6 +4754,11 @@ module.exports = CssModificatorProperty = (function() {
       } else if (this.type === 'select') {
         return {
           remove: this.otherClasses(void 0),
+          add: void 0
+        };
+      } else if (this.type === 'input') {
+        return {
+          remove: currentValue,
           add: void 0
         };
       }
@@ -4758,6 +4772,8 @@ module.exports = CssModificatorProperty = (function() {
       return value === this.value;
     } else if (this.type === 'select') {
       return this.containsOption(value);
+    } else if (this.type === 'input') {
+      return value;
     } else {
       return log.warn("Not implemented: CssModificatorProperty#validateValue() for type " + this.type);
     }
@@ -5002,7 +5018,7 @@ Version = require('./version');
 module.exports = validator = jScheme["new"]();
 
 validator.add('styleType', function(value) {
-  return value === 'option' || value === 'select';
+  return value === 'option' || value === 'select' || value === 'input';
 });
 
 validator.add('semVer', function(value) {
@@ -7935,6 +7951,14 @@ module.exports = ComponentView = (function() {
   };
 
   ComponentView.prototype.setStyle = function(name, className) {
+    if(name == 'image-link'){
+      if(className != ''){
+        this.$html.attr('data-link', className);
+        className = '_image-link';
+      } else {
+        this.$html.removeAttr('data-link');
+      }
+    };
     var changes, i, len, ref, removeClass;
     changes = this.template.styles[name].cssClassChanges(className);
     if (changes.remove) {
