@@ -99,3 +99,25 @@ describe 'css_modificator_property:', ->
       it 'validates value null', ->
         expect(@style.validateValue(null)).to.be.true
 
+  describe '"hyperlink" of type "text"', ->
+
+    beforeEach ->
+      @style = new CssModificatorProperty
+        name: 'hyperlink'
+        label: 'Which hyperlink?'
+        type: 'text'
+        value: ''
+
+    describe 'label', ->
+
+      it 'assigns a default one', ->
+        expect(@style.label).to.equal('Which hyperlink?')
+
+
+    describe 'validateValue()', ->
+
+      it 'validates empty value', ->
+        expect(@style.validateValue('')).to.be.true
+
+      it 'validates value when set "http://test.com"', ->
+        expect(@style.validateValue('http://test.com')).to.be.true

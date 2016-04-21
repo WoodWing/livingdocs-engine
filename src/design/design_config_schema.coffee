@@ -7,7 +7,7 @@ module.exports = validator = jScheme.new()
 # -----------------
 
 validator.add 'styleType', (value) ->
-  value == 'option' or value == 'select'
+  value == 'option' or value == 'select' or value == 'text'
 
 
 validator.add 'semVer', (value) ->
