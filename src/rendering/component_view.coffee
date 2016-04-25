@@ -60,6 +60,7 @@ module.exports = class ComponentView
 
   render: (mode) ->
     @updateContent()
+    @updateData()
     @updateHtml()
 
 
@@ -78,9 +79,14 @@ module.exports = class ComponentView
   updateHtml: ->
     for name, value of @model.styles
       @setStyle(name, value)
-
     @stripHtmlIfReadOnly()
 
+  updateData: () ->
+    # Hyperlink data type alters the html structure
+    hyperlink = @model.dataValues['hyperlink']
+    if hyperlink
+      @setHyperlink(hyperlink)
+      @stripHtmlIfReadOnly()
 
   displayOptionals: ->
     @directives.each (directive) =>
@@ -314,6 +320,15 @@ module.exports = class ComponentView
         @$html.removeClass(removeClass)
 
     @$html.addClass(changes.add)
+
+  setHyperlink: (value) ->
+    $elem = @directives.$getElem(@model.componentName)
+    $elem.attr("data-hyperlink",  value || undefined )
+    if @isReadOnly
+      if value
+        $elem.find('a').attr('href', value).length or $elem.append($('<a>', href: value))
+      else
+        $elem.find('a').remove()
 
 
   # Disable tabbing for the children of an element.

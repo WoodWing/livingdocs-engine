@@ -14,6 +14,8 @@ module.exports = class CssModificatorProperty
       when 'select'
         assert options, "TemplateStyle error: no 'options' provided"
         @options = options
+      when 'text'
+        @value = value
       else
         log.error "TemplateStyle error: unknown type '#{ @type }'"
 
@@ -47,6 +49,8 @@ module.exports = class CssModificatorProperty
       value == @value
     else if @type is 'select'
       @containsOption(value)
+    else if @type is 'text'
+      true
     else
       log.warn "Not implemented: CssModificatorProperty#validateValue() for type #{ @type }"
 

@@ -84,6 +84,7 @@ module.exports = class Renderer
     @componentTree.componentMoved.add( @componentMoved )
     @componentTree.componentContentChanged.add( @componentContentChanged )
     @componentTree.componentHtmlChanged.add( @componentHtmlChanged )
+    @componentTree.componentDataChanged.add( @componentDataChanged )
 
 
   removeComponentTreeListeners: ->
@@ -92,6 +93,7 @@ module.exports = class Renderer
     @componentTree.componentMoved.remove( @componentMoved )
     @componentTree.componentContentChanged.remove( @componentContentChanged )
     @componentTree.componentHtmlChanged.remove( @componentHtmlChanged )
+    @componentTree.componentDataChanged.remove( @componentDataChanged )
 
 
   componentAdded: (model) =>
@@ -115,6 +117,9 @@ module.exports = class Renderer
 
   componentHtmlChanged: (model) =>
     @getOrCreateComponentView(model).updateHtml()
+
+  componentDataChanged: (model) =>
+    @getOrCreateComponentView(model).updateData()
 
 
   # Rendering
