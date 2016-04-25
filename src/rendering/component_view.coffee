@@ -60,6 +60,7 @@ module.exports = class ComponentView
 
   render: (mode) ->
     @updateContent()
+    @updateData()
     @updateHtml()
 
 
@@ -76,15 +77,16 @@ module.exports = class ComponentView
 
 
   updateHtml: ->
-    directive = @model.directives.get(@model.componentName)
     for name, value of @model.styles
-      if directive and directive.isImage and name == "hyperlink"
-        @setHyperlink(value)
-      else
-        @setStyle(name, value)
-
+      @setStyle(name, value)
     @stripHtmlIfReadOnly()
 
+  updateData: () ->
+    # Hyperlink data type alters the html structure
+    hyperlink = @model.dataValues['hyperlink']
+    if hyperlink
+      @setHyperlink(hyperlink)
+      @stripHtmlIfReadOnly()
 
   displayOptionals: ->
     @directives.each (directive) =>
