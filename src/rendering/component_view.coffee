@@ -83,10 +83,20 @@ module.exports = class ComponentView
 
   updateData: () ->
     # Hyperlink data type alters the html structure
-    hyperlink = @model.dataValues['hyperlink']
-    if hyperlink
-      @setHyperlink(hyperlink)
-      @stripHtmlIfReadOnly()
+    textInputProperties = ['letter-spacing','line-height','hyperlink'];
+
+    for key, value of @model.dataValues
+      if key is 'hyperlink'
+        @setHyperlink(value)
+        return @stripHtmlIfReadOnly()
+      else
+        return @setCssStyle(@, @model.template.styles[key]['cssProp'], value, @model.template.styles[key]['defaultValue'], @model.template.styles[key]['unit'])
+
+  setCssStyle: (elem, property, value, defaultValue, unit) ->
+    if value isnt defaultValue
+      elem.$html.css property, value+unit
+    else
+      elem.$html.css property, ''
 
   displayOptionals: ->
     @directives.each (directive) =>
