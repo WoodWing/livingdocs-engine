@@ -61,6 +61,7 @@ module.exports = class ComponentView
   render: (mode) ->
     @updateContent()
     @updateData()
+    @updateInlineStylesData()
     @updateHtml()
 
 
@@ -83,12 +84,17 @@ module.exports = class ComponentView
 
   updateData: () ->
     # Hyperlink data type alters the html structure
-    for property, value of @model.dataValues
-      if property is 'hyperlink'
-        @setHyperlink(value)
-        @stripHtmlIfReadOnly()
-      else
-        @setCssStyle(@, @model.template.styles[property]['cssProp'], value, @model.template.styles[property]['defaultValue'], @model.template.styles[property]['unit'])
+    hyperlink = @model.dataValues['hyperlink']
+    if hyperlink
+      @setHyperlink(hyperlink)
+      @stripHtmlIfReadOnly()
+    return
+
+
+  updateInlineStylesData: () ->
+  # Set inline styles
+    for property, value of @model.dataInlineStyles
+      @setCssStyle(@, @model.template.styles[property]['cssProp'], value, @model.template.styles[property]['defaultValue'], @model.template.styles[property]['unit'])
     return
 
   setCssStyle: (elem, property, value, defaultValue, unit) ->

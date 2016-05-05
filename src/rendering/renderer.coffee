@@ -120,6 +120,7 @@ module.exports = class Renderer
 
   componentDataChanged: (model) =>
     @getOrCreateComponentView(model).updateData()
+    @getOrCreateComponentView(model).updateInlineStylesData()
 
 
   # Rendering

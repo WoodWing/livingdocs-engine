@@ -39,6 +39,9 @@ module.exports = do ->
     unless serialization.isEmpty(component.dataValues)
       json.data = $.extend(true, {}, component.dataValues)
 
+    unless serialization.isEmpty(component.dataInlineStyles)
+      json.inlineStylesData = $.extend(true, {}, component.dataInlineStyles)
+
     # create an array for every container
     for name of component.containers
       json.containers ||= {}
@@ -70,6 +73,8 @@ module.exports = do ->
       model.setStyle(styleName, value)
 
     model.data(json.data) if json.data
+
+    model.inlineData(json.inlineStylesData) if json.inlineStylesData
 
     for containerName, componentArray of json.containers
       assert model.containers.hasOwnProperty(containerName),
