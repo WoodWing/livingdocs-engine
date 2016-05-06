@@ -167,6 +167,7 @@
   -webkit-transition: all 0.3s;
           transition: all 0.3s;
   -webkit-transform: translateY(-25px);
+      -ms-transform: translateY(-25px);
           transform: translateY(-25px);
 }
 
@@ -174,6 +175,7 @@
   -webkit-transition: all 0.3s;
           transition: all 0.3s;
   -webkit-transform: translateY(25px);
+      -ms-transform: translateY(25px);
           transform: translateY(25px);
 }
 
