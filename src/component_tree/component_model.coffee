@@ -29,6 +29,7 @@ module.exports = class ComponentModel
     @initializeDirectives()
     @styles = {}
     @dataValues = {}
+    @dataInlineStyles = {}
     @id = id || guid.next()
     @componentName = @template.name
 
@@ -373,6 +374,52 @@ module.exports = class ComponentModel
     return false if deepEqual(@dataValues[name], value)
 
     @dataValues[name] = value
+    true
+
+
+  # Inline styles Data Operations
+  # ---------------
+  #
+  # Set inline styles data to be stored with this componentModel.
+
+
+  # can be called with a string or a hash
+  # getter:
+  #   data() or
+  #   data('my-key')
+  # setter:
+  #   data('my-key': 'awesome')
+  inlineData: (arg) ->
+    if typeof(arg) == 'object'
+      changedDataProperties = []
+      for name, value of arg
+        if @changeInlineData(name, value)
+          changedDataProperties.push(name)
+      if changedDataProperties.length > 0
+        @componentTree?.dataChanging(this, changedDataProperties)
+    else if arg
+      @dataInlineStyles[arg]
+    else
+      @dataInlineStyles
+
+
+  setInlineData: (key, value) ->
+    if key && @changeInlineData(key, value)
+      @componentTree?.dataChanging(this, [key])
+
+
+  getInlineData: (key) ->
+    if key
+      @dataInlineStyles[key]
+    else
+      @dataInlineStyles
+
+
+  # @api private
+  changeInlineData: (name, value) ->
+    return false if deepEqual(@dataInlineStyles[name], value)
+
+    @dataInlineStyles[name] = value
     true
 
 

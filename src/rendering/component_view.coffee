@@ -61,6 +61,7 @@ module.exports = class ComponentView
   render: (mode) ->
     @updateContent()
     @updateData()
+    @updateInlineStylesData()
     @updateHtml()
 
 
@@ -87,6 +88,20 @@ module.exports = class ComponentView
     if hyperlink
       @setHyperlink(hyperlink)
       @stripHtmlIfReadOnly()
+    return
+
+
+  updateInlineStylesData: () ->
+  # Set inline styles
+    for property, value of @model.dataInlineStyles
+      @setCssStyle(@, @model.template.styles[property]['cssProp'], value, @model.template.styles[property]['defaultValue'], @model.template.styles[property]['unit'])
+    return
+
+  setCssStyle: (elem, property, value, defaultValue, unit) ->
+    if value isnt defaultValue
+      elem.$html.css property, value+unit
+    else
+      elem.$html.css property, ''
 
   displayOptionals: ->
     @directives.each (directive) =>
