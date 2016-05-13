@@ -4757,7 +4757,7 @@ words = require('../modules/words');
 module.exports = CssModificatorProperty = (function() {
   function CssModificatorProperty(arg) {
     var label, options, value;
-    this.name = arg.name, label = arg.label, this.type = arg.type, value = arg.value, options = arg.options, this.pattern = arg.pattern, this.defaultValue = arg.defaultValue, this.unit = arg.unit, this.cssProp = arg.cssProp;
+    this.name = arg.name, label = arg.label, this.type = arg.type, value = arg.value, options = arg.options, this.pattern = arg.pattern, this.defaultValue = arg.defaultValue, this.unit = arg.unit, this.cssProp = arg.cssProp, this.inputPlaceholder = arg.inputPlaceholder;
     this.label = label || words.humanize(this.name);
     switch (this.type) {
       case 'option':
@@ -10358,8 +10358,8 @@ Template.parseIdentifier = function(identifier) {
 
 },{"../component_tree/component_model":17,"../configuration/config":26,"../modules/logging/assert":50,"../modules/logging/log":51,"../modules/words":55,"../rendering/component_view":56,"./directive_collection":70,"./directive_compiler":71,"./directive_finder":72,"./directive_iterator":73,"jquery":"jquery"}],75:[function(require,module,exports){
 module.exports={
-  "version": "0.12.14",
-  "revision": "5d193f6",
+  "version": "0.12.15",
+  "revision": "c71b77d",
   "forked-from-engine-version": "0.12.1"
 }
 
