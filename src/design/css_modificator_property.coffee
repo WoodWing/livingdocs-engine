@@ -4,7 +4,7 @@ words = require('../modules/words')
 
 module.exports = class CssModificatorProperty
 
-  constructor: ({ @name, label, @type, value, options,  @pattern,  @defaultValue, @unit, @cssProp }) ->
+  constructor: ({ @name, label, @type, value, options,  @pattern,  @defaultValue, @unit, @cssProp, @inputPlaceholder}) ->
     @label = label || words.humanize( @name )
 
     switch @type
