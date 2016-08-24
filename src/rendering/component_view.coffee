@@ -257,7 +257,9 @@ module.exports = class ComponentView
 
   setHtml: (name, value) ->
     $elem = @directives.$getElem(name)
-    $elem.html(value || '')
+    # to prevent any error in current work frame set html in the next one
+    if (value)
+      @setHtmlInNewWorkFrame($elem, value)
 
     if not value
       $elem.html(@template.defaults[name])
@@ -266,7 +268,14 @@ module.exports = class ComponentView
 
     @directivesToReset ||= {}
     @directivesToReset[name] = name
-
+    
+    
+  setHtmlInNewWorkFrame: ($elem, value) ->
+    window.setTimeout ( -> 
+      if $elem
+        $elem.html(value)
+    ), 0
+    
 
   setLink: (name, value) ->
     $elem = @directives.$getElem(name)
