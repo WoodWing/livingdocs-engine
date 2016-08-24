@@ -3077,8 +3077,8 @@ module.exports = ComponentModel = (function() {
     }));
   };
 
-  ComponentModel.prototype.createView = function(isReadOnly) {
-    return this.template.createView(this, isReadOnly);
+  ComponentModel.prototype.createView = function(isReadOnly, forceHtmlSet) {
+    return this.template.createView(this, isReadOnly, forceHtmlSet);
   };
 
   ComponentModel.prototype.getMainView = function() {
@@ -7237,7 +7237,8 @@ module.exports = Livingdoc = (function(superClass) {
     return new Renderer({
       componentTree: this.componentTree,
       renderingContainer: new RenderingContainer(),
-      excludeComponents: excludeComponents
+      excludeComponents: excludeComponents,
+      forceHtmlSet: true
     }).html();
   };
 
@@ -7674,7 +7675,7 @@ dom = require('../interaction/dom');
 
 module.exports = ComponentView = (function() {
   function ComponentView(arg) {
-    this.model = arg.model, this.$html = arg.$html, this.directives = arg.directives, this.isReadOnly = arg.isReadOnly;
+    this.model = arg.model, this.$html = arg.$html, this.directives = arg.directives, this.isReadOnly = arg.isReadOnly, this.forceHtmlSet = arg.forceHtmlSet;
     this.renderer = void 0;
     this.$elem = this.$html;
     this.template = this.model.template;
@@ -7946,7 +7947,11 @@ module.exports = ComponentView = (function() {
     var $elem;
     $elem = this.directives.$getElem(name);
     if (value) {
-      this.setHtmlInNewWorkFrame($elem, value);
+      if (this.forceHtmlSet) {
+        $elem.html(value);
+      } else {
+        this.setHtmlInNewWorkFrame($elem, value);
+      }
     }
     if (!value) {
       $elem.html(this.template.defaults[name]);
@@ -8720,7 +8725,7 @@ config = require('../configuration/config');
 module.exports = Renderer = (function() {
   function Renderer(arg) {
     var $wrapper, excludeComponents;
-    this.componentTree = arg.componentTree, this.renderingContainer = arg.renderingContainer, $wrapper = arg.$wrapper, excludeComponents = arg.excludeComponents;
+    this.componentTree = arg.componentTree, this.renderingContainer = arg.renderingContainer, $wrapper = arg.$wrapper, excludeComponents = arg.excludeComponents, this.forceHtmlSet = arg.forceHtmlSet;
     this.componentDataChanged = bind(this.componentDataChanged, this);
     this.componentHtmlChanged = bind(this.componentHtmlChanged, this);
     this.componentContentChanged = bind(this.componentContentChanged, this);
@@ -8857,7 +8862,7 @@ module.exports = Renderer = (function() {
     if (view = this.componentViews[model.id]) {
       return view;
     }
-    view = model.createView(this.renderingContainer.isReadOnly);
+    view = model.createView(this.renderingContainer.isReadOnly, this.forceHtmlSet);
     view.setRenderer(this);
     return this.componentViews[model.id] = view;
   };
@@ -10214,7 +10219,7 @@ module.exports = Template = (function() {
     });
   };
 
-  Template.prototype.createView = function(componentModel, isReadOnly) {
+  Template.prototype.createView = function(componentModel, isReadOnly, forceHtmlSet) {
     var $elem, componentView, directives, ref;
     ref = this.createViewHtml(), $elem = ref.$elem, directives = ref.directives;
     componentModel || (componentModel = this.createModel());
@@ -10222,7 +10227,8 @@ module.exports = Template = (function() {
       model: componentModel,
       $html: $elem,
       directives: directives,
-      isReadOnly: isReadOnly
+      isReadOnly: isReadOnly,
+      forceHtmlSet: forceHtmlSet
     });
   };
 
@@ -10368,8 +10374,8 @@ Template.parseIdentifier = function(identifier) {
 
 },{"../component_tree/component_model":17,"../configuration/config":26,"../modules/logging/assert":50,"../modules/logging/log":51,"../modules/words":55,"../rendering/component_view":56,"./directive_collection":70,"./directive_compiler":71,"./directive_finder":72,"./directive_iterator":73,"jquery":"jquery"}],75:[function(require,module,exports){
 module.exports={
-  "version": "0.12.18",
-  "revision": "e823159",
+  "version": "0.12.19",
+  "revision": "b8622a0",
   "forked-from-engine-version": "0.12.1"
 }
 
