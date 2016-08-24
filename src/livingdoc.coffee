@@ -206,6 +206,7 @@ module.exports = class Livingdoc extends EventEmitter
       componentTree: @componentTree
       renderingContainer: new RenderingContainer()
       excludeComponents: excludeComponents
+      forceHtmlSet: true
     ).html()
 
 

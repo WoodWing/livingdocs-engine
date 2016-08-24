@@ -11,7 +11,7 @@ module.exports = class Renderer
   # - renderingContainer { RenderingContainer }
   # - $wrapper { jQuery object } A wrapper with a node with a 'doc-section' css class where to insert the content.
   # - excludeComponents { String or Array } componentModel.id or an array of such.
-  constructor: ({ @componentTree, @renderingContainer, $wrapper, excludeComponents }) ->
+  constructor: ({ @componentTree, @renderingContainer, $wrapper, excludeComponents, @forceHtmlSet }) ->
     assert @componentTree, 'no componentTree specified'
     assert @renderingContainer, 'no rendering container specified'
 
@@ -133,7 +133,7 @@ module.exports = class Renderer
   getOrCreateComponentView: (model) ->
     return view if view = @componentViews[model.id]
 
-    view = model.createView(@renderingContainer.isReadOnly)
+    view = model.createView(@renderingContainer.isReadOnly, @forceHtmlSet)
     view.setRenderer(this)
     @componentViews[model.id] = view
 

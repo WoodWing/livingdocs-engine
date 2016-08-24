@@ -8,7 +8,7 @@ dom = require('../interaction/dom')
 
 module.exports = class ComponentView
 
-  constructor: ({ @model, @$html, @directives, @isReadOnly }) ->
+  constructor: ({ @model, @$html, @directives, @isReadOnly, @forceHtmlSet }) ->
     @renderer = undefined # will be set once the view is attached to a renderer
     @$elem = @$html
     @template = @model.template
@@ -258,8 +258,11 @@ module.exports = class ComponentView
   setHtml: (name, value) ->
     $elem = @directives.$getElem(name)
     # to prevent any error in current work frame set html in the next one
-    if (value)
-      @setHtmlInNewWorkFrame($elem, value)
+    if value
+      if @forceHtmlSet
+        $elem.html(value)
+      else
+        @setHtmlInNewWorkFrame($elem, value)
 
     if not value
       $elem.html(@template.defaults[name])
@@ -271,7 +274,7 @@ module.exports = class ComponentView
     
     
   setHtmlInNewWorkFrame: ($elem, value) ->
-    window.setTimeout ( -> 
+    window.setTimeout ( ->
       if $elem
         $elem.html(value)
     ), 0

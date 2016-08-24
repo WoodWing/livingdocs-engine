@@ -69,8 +69,8 @@ module.exports = class ComponentModel
   # ---------------
 
 
-  createView: (isReadOnly) ->
-    @template.createView(this, isReadOnly)
+  createView: (isReadOnly, forceHtmlSet) ->
+    @template.createView(this, isReadOnly, forceHtmlSet)
 
 
   getMainView: ->

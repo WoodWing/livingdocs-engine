@@ -53,7 +53,7 @@ module.exports = class Template
     new ComponentModel(template: this)
 
 
-  createView: (componentModel, isReadOnly) ->
+  createView: (componentModel, isReadOnly, forceHtmlSet) ->
     { $elem, directives } = @createViewHtml()
     componentModel ||= @createModel()
 
@@ -62,6 +62,7 @@ module.exports = class Template
       $html: $elem
       directives: directives
       isReadOnly: isReadOnly
+      forceHtmlSet: forceHtmlSet
 
 
   createViewHtml: ->
