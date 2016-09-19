@@ -260,7 +260,7 @@ module.exports = class ComponentView
     # to prevent any error in current work frame set html in the next one
     if value
       if @forceHtmlSet
-        $elem.html(value)
+        @_setHtml($elem, value);
       else
         @setHtmlInNewWorkFrame($elem, value)
 
@@ -274,11 +274,26 @@ module.exports = class ComponentView
     
     
   setHtmlInNewWorkFrame: ($elem, value) ->
+    $self = this
     window.setTimeout ( ->
       if $elem
-        $elem.html(value)
+        $self._setHtml($elem, value)
     ), 0
-    
+
+
+  _setHtml: ($elem, value) ->
+    $elem.get(0).innerHTML = value;
+    # do some magic here with scripts - replace them to make it work in iframes
+    $elem.find('script').replaceWith( ->
+      script = $elem.get(0).ownerDocument.createElement('script');
+      if @.getAttribute('src')
+        script.setAttribute('src', @.getAttribute('src'));
+      else
+        script.innerHTML = @.innerHTML;
+      @.parentNode.insertBefore(script, @.nextSibling)
+      return '';
+    )
+
 
   setLink: (name, value) ->
     $elem = @directives.$getElem(name)
