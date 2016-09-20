@@ -7948,7 +7948,7 @@ module.exports = ComponentView = (function() {
     $elem = this.directives.$getElem(name);
     if (value) {
       if (this.forceHtmlSet) {
-        $elem.html(value);
+        this._setHtml($elem, value);
       } else {
         this.setHtmlInNewWorkFrame($elem, value);
       }
@@ -7963,11 +7963,28 @@ module.exports = ComponentView = (function() {
   };
 
   ComponentView.prototype.setHtmlInNewWorkFrame = function($elem, value) {
+    var $self;
+    $self = this;
     return window.setTimeout((function() {
       if ($elem) {
-        return $elem.html(value);
+        return $self._setHtml($elem, value);
       }
     }), 0);
+  };
+
+  ComponentView.prototype._setHtml = function($elem, value) {
+    $elem.get(0).innerHTML = value;
+    return $elem.find('script').replaceWith(function() {
+      var script;
+      script = $elem.get(0).ownerDocument.createElement('script');
+      if (this.getAttribute('src')) {
+        script.setAttribute('src', this.getAttribute('src'));
+      } else {
+        script.innerHTML = this.innerHTML;
+      }
+      this.parentNode.insertBefore(script, this.nextSibling);
+      return '';
+    });
   };
 
   ComponentView.prototype.setLink = function(name, value) {
@@ -10374,8 +10391,8 @@ Template.parseIdentifier = function(identifier) {
 
 },{"../component_tree/component_model":17,"../configuration/config":26,"../modules/logging/assert":50,"../modules/logging/log":51,"../modules/words":55,"../rendering/component_view":56,"./directive_collection":70,"./directive_compiler":71,"./directive_finder":72,"./directive_iterator":73,"jquery":"jquery"}],75:[function(require,module,exports){
 module.exports={
-  "version": "0.12.19",
-  "revision": "b8622a0",
+  "version": "0.12.20",
+  "revision": "b707fe5",
   "forked-from-engine-version": "0.12.1"
 }
 
