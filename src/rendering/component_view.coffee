@@ -1,4 +1,5 @@
 $ = require('jquery')
+_ = require('underscore')
 config = require('../configuration/config')
 css = config.css
 attr = config.attr
@@ -80,7 +81,16 @@ module.exports = class ComponentView
   updateHtml: ->
     for name, value of @model.styles
       @setStyle(name, value)
+
+    for name, value of @model.content
+      @setInlineStyle(name)
+    for name, value of @model.containers
+      @setInlineStyle(name)
+    # sets the style on the root element
+    @setRootInlineStyle()
+
     @stripHtmlIfReadOnly()
+
 
   updateData: () ->
     # Hyperlink data type alters the html structure
@@ -167,10 +177,6 @@ module.exports = class ComponentView
   setAll: ->
     for name, value of @model.content
       @set(name, value)
-      @setInlineStyle(name)
-
-    # sets the style on the root element
-    @setRootInlineStyle()
 
     undefined
 
@@ -179,9 +185,13 @@ module.exports = class ComponentView
   setRootInlineStyle: () ->
     # set the special case style on the root
     # component if available
-    value = @model.inlineStyles[@rootComponentKey]
-    if value
-      @$html.css(value)
+    [$elem, value] = @_findInlineElementAndStyles @rootComponentKey, @$html
+    # remove previous styles first
+    if $elem
+      @_removeLastInlineStyles($elem)
+      if value
+        $elem.css(value)
+        @_storeInlineStyles($elem, value);
 
 
   # Set the style on passed directive element
@@ -189,10 +199,38 @@ module.exports = class ComponentView
   # @param {!string} name The name of the directive
   # in which the inline style will be applied
   setInlineStyle: (name) ->
+    [$elem, value] = @_findInlineElementAndStyles name
+    if $elem
+      # remove previous styles first
+      @_removeLastInlineStyles $elem
+      if value
+        # set styles
+        $elem.css value
+        # store styles
+        @_storeInlineStyles $elem, value;
+
+
+  _findInlineElementAndStyles: (name, $elem) ->
     value = @model.inlineStyles[name]
-    if value
-      $elem = @directives.$getElem(name)
-      $elem.css(value)
+    $elem ||= @directives.$getElem name
+    if _.isArray value
+      $elem = $elem.find value[0]
+      value = value[1]
+    [$elem, value]
+
+
+  # Remove previous styles
+  #
+  # @param el jquery Element
+  _removeLastInlineStyles: (el) ->
+    if (el.data('lastInlineStyles'))
+      for k, v of el.data('lastInlineStyles')
+        el.css(k, '');
+
+
+  # Store inline styles
+  _storeInlineStyles: (el, styles) ->
+    el.data('lastInlineStyles', $.extend({}, styles));
 
 
   set: (name, value) ->

@@ -328,8 +328,11 @@ module.exports = class ComponentModel
 
   # set the inline style of the component
   setInlineStyles: (inlineStyles) ->
-    for name, value of inlineStyles
-      @inlineStyles[name] = value
+    inlineStyles ||= {}
+    if (!deepEqual(@inlineStyles, inlineStyles))
+      @inlineStyles = inlineStyles
+      if @componentTree
+        @componentTree.htmlChanging(this)
 
   # Data Operations
   # ---------------
