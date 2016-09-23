@@ -3374,13 +3374,13 @@ module.exports = ComponentModel = (function() {
   };
 
   ComponentModel.prototype.setInlineStyles = function(inlineStyles) {
-    var name, results, value;
-    results = [];
-    for (name in inlineStyles) {
-      value = inlineStyles[name];
-      results.push(this.inlineStyles[name] = value);
+    inlineStyles || (inlineStyles = {});
+    if (!deepEqual(this.inlineStyles, inlineStyles)) {
+      this.inlineStyles = inlineStyles;
+      if (this.componentTree) {
+        return this.componentTree.htmlChanging(this);
+      }
     }
-    return results;
   };
 
   ComponentModel.prototype.data = function(arg) {
@@ -3572,6 +3572,9 @@ module.exports = (function() {
     if (!serialization.isEmpty(component.dataInlineStyles)) {
       json.inlineStylesData = $.extend(true, {}, component.dataInlineStyles);
     }
+    if (!serialization.isEmpty(component.inlineStyles)) {
+      json.inlineStyles = $.extend(true, {}, component.inlineStyles);
+    }
     for (name in component.containers) {
       json.containers || (json.containers = {});
       json.containers[name] = [];
@@ -3609,6 +3612,9 @@ module.exports = (function() {
       }
       if (json.inlineStylesData) {
         model.inlineData(json.inlineStylesData);
+      }
+      if (json.inlineStyles) {
+        model.setInlineStyles(json.inlineStyles);
       }
       ref2 = json.containers;
       for (containerName in ref2) {
@@ -7657,9 +7663,11 @@ module.exports = (function() {
 
 
 },{"jquery":"jquery"}],56:[function(require,module,exports){
-var $, ComponentView, DirectiveIterator, attr, config, css, dom, eventing;
+var $, ComponentView, DirectiveIterator, _, attr, config, css, dom, eventing;
 
 $ = require('jquery');
+
+_ = require('underscore');
 
 config = require('../configuration/config');
 
@@ -7740,12 +7748,23 @@ module.exports = ComponentView = (function() {
   };
 
   ComponentView.prototype.updateHtml = function() {
-    var name, ref, value;
+    var name, ref, ref1, ref2, value;
     ref = this.model.styles;
     for (name in ref) {
       value = ref[name];
       this.setStyle(name, value);
     }
+    ref1 = this.model.content;
+    for (name in ref1) {
+      value = ref1[name];
+      this.setInlineStyle(name);
+    }
+    ref2 = this.model.containers;
+    for (name in ref2) {
+      value = ref2[name];
+      this.setInlineStyle(name);
+    }
+    this.setRootInlineStyle();
     return this.stripHtmlIfReadOnly();
   };
 
@@ -7845,27 +7864,60 @@ module.exports = ComponentView = (function() {
     for (name in ref) {
       value = ref[name];
       this.set(name, value);
-      this.setInlineStyle(name);
     }
-    this.setRootInlineStyle();
     return void 0;
   };
 
   ComponentView.prototype.setRootInlineStyle = function() {
-    var value;
-    value = this.model.inlineStyles[this.rootComponentKey];
-    if (value) {
-      return this.$html.css(value);
+    var $elem, ref, value;
+    ref = this._findInlineElementAndStyles(this.rootComponentKey, this.$html), $elem = ref[0], value = ref[1];
+    if ($elem) {
+      this._removeLastInlineStyles($elem);
+      if (value) {
+        $elem.css(value);
+        return this._storeInlineStyles($elem, value);
+      }
     }
   };
 
   ComponentView.prototype.setInlineStyle = function(name) {
-    var $elem, value;
-    value = this.model.inlineStyles[name];
-    if (value) {
-      $elem = this.directives.$getElem(name);
-      return $elem.css(value);
+    var $elem, ref, value;
+    ref = this._findInlineElementAndStyles(name), $elem = ref[0], value = ref[1];
+    if ($elem) {
+      this._removeLastInlineStyles($elem);
+      if (value) {
+        $elem.css(value);
+        return this._storeInlineStyles($elem, value);
+      }
     }
+  };
+
+  ComponentView.prototype._findInlineElementAndStyles = function(name, $elem) {
+    var value;
+    value = this.model.inlineStyles[name];
+    $elem || ($elem = this.directives.$getElem(name));
+    if (_.isArray(value)) {
+      $elem = $elem.find(value[0]);
+      value = value[1];
+    }
+    return [$elem, value];
+  };
+
+  ComponentView.prototype._removeLastInlineStyles = function(el) {
+    var k, ref, results, v;
+    if (el.data('lastInlineStyles')) {
+      ref = el.data('lastInlineStyles');
+      results = [];
+      for (k in ref) {
+        v = ref[k];
+        results.push(el.css(k, ''));
+      }
+      return results;
+    }
+  };
+
+  ComponentView.prototype._storeInlineStyles = function(el, styles) {
+    return el.data('lastInlineStyles', $.extend({}, styles));
   };
 
   ComponentView.prototype.set = function(name, value) {
@@ -8242,7 +8294,7 @@ module.exports = ComponentView = (function() {
 
 
 
-},{"../configuration/config":26,"../interaction/dom":41,"../modules/eventing":46,"../template/directive_iterator":73,"jquery":"jquery"}],57:[function(require,module,exports){
+},{"../configuration/config":26,"../interaction/dom":41,"../modules/eventing":46,"../template/directive_iterator":73,"jquery":"jquery","underscore":10}],57:[function(require,module,exports){
 var $, Dependencies, Dependency, assert, dependenciesToHtml, log,
   bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
@@ -10391,8 +10443,8 @@ Template.parseIdentifier = function(identifier) {
 
 },{"../component_tree/component_model":17,"../configuration/config":26,"../modules/logging/assert":50,"../modules/logging/log":51,"../modules/words":55,"../rendering/component_view":56,"./directive_collection":70,"./directive_compiler":71,"./directive_finder":72,"./directive_iterator":73,"jquery":"jquery"}],75:[function(require,module,exports){
 module.exports={
-  "version": "0.12.21",
-  "revision": "0a30fb6",
+  "version": "0.12.22",
+  "revision": "d6ec808",
   "forked-from-engine-version": "0.12.1"
 }
 
