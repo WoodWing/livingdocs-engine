@@ -7764,7 +7764,7 @@ module.exports = ComponentView = (function() {
       value = ref2[name];
       this.setInlineStyle(name);
     }
-    this.setRootInlineStyle();
+    this.setInlineStyle();
     return this.stripHtmlIfReadOnly();
   };
 
@@ -7868,39 +7868,45 @@ module.exports = ComponentView = (function() {
     return void 0;
   };
 
-  ComponentView.prototype.setRootInlineStyle = function() {
-    var $elem, ref, value;
-    ref = this._findInlineElementAndStyles(this.rootComponentKey, this.$html), $elem = ref[0], value = ref[1];
-    if ($elem) {
-      this._removeLastInlineStyles($elem);
-      if (value) {
-        $elem.css(value);
-        return this._storeInlineStyles($elem, value);
-      }
-    }
-  };
-
   ComponentView.prototype.setInlineStyle = function(name) {
-    var $elem, ref, value;
-    ref = this._findInlineElementAndStyles(name), $elem = ref[0], value = ref[1];
-    if ($elem) {
-      this._removeLastInlineStyles($elem);
-      if (value) {
-        $elem.css(value);
-        return this._storeInlineStyles($elem, value);
+    var $elem, i, item, items, len, results, value;
+    items = name ? this._findInlineElementAndStyles(name) : this._findInlineElementAndStyles(this.rootComponentKey, this.$html);
+    results = [];
+    for (i = 0, len = items.length; i < len; i++) {
+      item = items[i];
+      $elem = item[0];
+      value = item[1];
+      if ($elem) {
+        this._removeLastInlineStyles($elem);
+        if (value) {
+          $elem.css(value);
+          results.push(this._storeInlineStyles($elem, value));
+        } else {
+          results.push(void 0);
+        }
+      } else {
+        results.push(void 0);
       }
     }
+    return results;
   };
 
   ComponentView.prototype._findInlineElementAndStyles = function(name, $elem) {
-    var value;
+    var $itemElem, i, item, itemValue, len, result, value;
+    result = [];
     value = this.model.inlineStyles[name];
     $elem || ($elem = this.directives.$getElem(name));
     if (_.isArray(value)) {
-      $elem = $elem.find(value[0]);
-      value = value[1];
+      for (i = 0, len = value.length; i < len; i++) {
+        item = value[i];
+        $itemElem = item.elem && $elem.find(item.elem) || $elem;
+        itemValue = item.value;
+        result.push([$itemElem, itemValue]);
+      }
+    } else {
+      result.push([$elem, value]);
     }
-    return [$elem, value];
+    return result;
   };
 
   ComponentView.prototype._removeLastInlineStyles = function(el) {
@@ -10443,8 +10449,8 @@ Template.parseIdentifier = function(identifier) {
 
 },{"../component_tree/component_model":17,"../configuration/config":26,"../modules/logging/assert":50,"../modules/logging/log":51,"../modules/words":55,"../rendering/component_view":56,"./directive_collection":70,"./directive_compiler":71,"./directive_finder":72,"./directive_iterator":73,"jquery":"jquery"}],75:[function(require,module,exports){
 module.exports={
-  "version": "0.12.22",
-  "revision": "d6ec808",
+  "version": "0.12.23",
+  "revision": "dd0f9ab",
   "forked-from-engine-version": "0.12.1"
 }
 
