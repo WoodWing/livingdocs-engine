@@ -87,7 +87,7 @@ module.exports = class ComponentView
     for name, value of @model.containers
       @setInlineStyle(name)
     # sets the style on the root element
-    @setRootInlineStyle()
+    @setInlineStyle()
 
     @stripHtmlIfReadOnly()
 
@@ -181,42 +181,38 @@ module.exports = class ComponentView
     undefined
 
 
-  # Set the style on the root element
-  setRootInlineStyle: () ->
-    # set the special case style on the root
-    # component if available
-    [$elem, value] = @_findInlineElementAndStyles @rootComponentKey, @$html
-    # remove previous styles first
-    if $elem
-      @_removeLastInlineStyles($elem)
-      if value
-        $elem.css(value)
-        @_storeInlineStyles($elem, value);
-
-
   # Set the style on passed directive element
   #
   # @param {!string} name The name of the directive
   # in which the inline style will be applied
   setInlineStyle: (name) ->
-    [$elem, value] = @_findInlineElementAndStyles name
-    if $elem
-      # remove previous styles first
-      @_removeLastInlineStyles $elem
-      if value
-        # set styles
-        $elem.css value
-        # store styles
-        @_storeInlineStyles $elem, value;
+    items = if name then @_findInlineElementAndStyles name else @_findInlineElementAndStyles @rootComponentKey, @$html
+    for item in items
+      $elem = item[0]
+      value = item[1]
+      if $elem
+        # remove previous styles first
+        @_removeLastInlineStyles $elem
+        if value
+          # set styles
+          $elem.css value
+          # store styles
+          @_storeInlineStyles $elem, value;
 
 
   _findInlineElementAndStyles: (name, $elem) ->
+    result = []
     value = @model.inlineStyles[name]
     $elem ||= @directives.$getElem name
     if _.isArray value
-      $elem = $elem.find value[0]
-      value = value[1]
-    [$elem, value]
+      for item in value
+        $itemElem = item.elem && $elem.find(item.elem) || $elem
+        itemValue = item.value
+        result.push [$itemElem, itemValue]
+    else
+      result.push [$elem, value]
+
+    result
 
 
   # Remove previous styles
